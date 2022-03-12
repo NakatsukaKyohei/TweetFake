@@ -1,13 +1,13 @@
-package com.example.tweetfake.ui.notifications
+package com.example.tweetfake.ui.alert
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class NotificationsViewModel : ViewModel() {
+class AlertViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
-        value = "This is notifications Fragment"
+        value = "This is alert Fragment"
     }
     val text: LiveData<String> = _text
 }

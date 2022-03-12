@@ -12,14 +12,20 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.example.tweetfake.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
+        android:id="@+id/navigation_search"
+        android:name="com.example.tweetfake.ui.alert.AlertFragment"
+        android:label="@string/title_search"
         tools:layout="@layout/fragment_dashboard" />
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.example.tweetfake.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
+        android:id="@+id/navigation_alert"
+        android:name="com.example.tweetfake.ui.notifications.SearchFragment"
+        android:label="@string/title_alert"
+        tools:layout="@layout/fragment_notifications" />
+
+    <fragment
+        android:id="@+id/navigation_direct_message"
+        android:name="com.example.tweetfake.ui.notifications.SearchFragment"
+        android:label="@string/title_direct_messages"
         tools:layout="@layout/fragment_notifications" />
 </navigation>

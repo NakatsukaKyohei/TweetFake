@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">TweetFake</string>
     <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_search">Dashboard</string>
+    <string name="title_alert">Notifications</string>
+    <string name="title_direct_messages">DirectMessages</string>
 </resources>
