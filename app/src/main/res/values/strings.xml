@@ -4,4 +4,8 @@
     <string name="title_search">Dashboard</string>
     <string name="title_alert">Notifications</string>
     <string name="title_direct_messages">DirectMessages</string>
+    <string name="sample_name">山田 太郎</string>
+    <string name="sample_id">\@tarou_yamada</string>
+    <string name="sample_pushed_time">・1時間</string>
+    <string name="sample_content">sample\nsample\nsample</string>
 </resources>
