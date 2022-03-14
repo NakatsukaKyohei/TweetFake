@@ -1,6 +1,6 @@
 package com.example.tweetfake.network
 
-import com.example.tweetfake.services.TweetsFromUserID
+import com.example.tweetfake.network.api_interface.TweetsFromUserID
 import retrofit2.Retrofit
 
 private val BASE_URL = "https://api.twitter.com/2/"

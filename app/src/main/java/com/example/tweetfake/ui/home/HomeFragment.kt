@@ -8,14 +8,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.tweetfake.BuildConfig
 import com.example.tweetfake.databinding.FragmentHomeBinding
 import com.example.tweetfake.model.Tweet
-import com.example.tweetfake.model.TweetData
-import com.example.tweetfake.network.api
-import com.google.gson.Gson
-import kotlinx.coroutines.*
-
+import com.example.tweetfake.services.TwitterServices
+import kotlinx.coroutines.runBlocking
+import java.lang.NullPointerException
 
 class HomeFragment : Fragment() {
 
@@ -36,10 +33,14 @@ class HomeFragment : Fragment() {
         val root: View = binding.root
         val tweetOverviewList = binding.tweetOverviewList
 
-        // create dummy data
-        var tweetData: List<Tweet>?
+        // get tweet data
+        var tweetData: List<Tweet>? = null
         runBlocking {
-            tweetData = searchTweet().data
+            try {
+                tweetData = TwitterServices.getTweetsFromUserID("786544808705691652").data
+            } catch(e: NullPointerException) {
+                Log.d("Exception", e.toString())
+            }
         }
         val tweetContents = Array(tweetData!!.size) { i -> tweetData!![i].text}
         val tweetIDs = Array(tweetData!!.size) { i -> tweetData!![i].id}
@@ -59,18 +60,4 @@ class HomeFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
-    suspend fun searchTweet(): TweetData {
-        val id = "786544808705691652"
-        var result: TweetData? = null
-        CoroutineScope(Dispatchers.IO).launch {
-            val response = api.fetchTweets(accessToken = "Bearer ${BuildConfig.TWITTER_BEARER_TOKEN}", id = id).string()
-            val gson = Gson()
-            val tweetData: TweetData = gson.fromJson(response, TweetData::class.java)
-            result = tweetData
-        }.join()
-
-        return result!!
-    }
-
 }

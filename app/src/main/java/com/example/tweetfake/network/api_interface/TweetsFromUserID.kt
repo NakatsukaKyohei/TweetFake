@@ -1,4 +1,4 @@
-package com.example.tweetfake.services
+package com.example.tweetfake.network.api_interface
 
 import okhttp3.ResponseBody
 import retrofit2.http.GET
