@@ -9,6 +9,5 @@ val retrofit: Retrofit = Retrofit.Builder()
     .baseUrl(BASE_URL)
     .build()
 
-val api = retrofit.create(TweetsFromUserID::class.java)
 
 
