@@ -15,6 +15,8 @@ class RecyclerAdapter(val tweetContentList: MutableList<CustomTweet>) : Recycler
         val tweetUserImage: ImageView = view.findViewById(R.id.tweet_user_image)
         val tweetUsername: TextView = view.findViewById(R.id.tweet_user_name)
         val tweetContent: TextView = view.findViewById(R.id.tweet_content)
+        val tweetTime: TextView = view.findViewById(R.id.tweet_time)
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerViewHolder {
@@ -30,6 +32,7 @@ class RecyclerAdapter(val tweetContentList: MutableList<CustomTweet>) : Recycler
             it.tweetUserImage.setImageResource(R.mipmap.ic_launcher_round)
             it.tweetUsername.text = tweetContentList[position].name
             it.tweetContent.text = tweetContentList[position].content
+            it.tweetTime.text = tweetContentList[position].createdAt.toString()
         }
     }
 }

@@ -5,7 +5,6 @@ import com.example.tweetfake.BuildConfig
 import com.example.tweetfake.model.FollowData
 import com.example.tweetfake.model.FollowerData
 import com.example.tweetfake.model.TweetData
-import com.example.tweetfake.model.enums.UserField
 import com.example.tweetfake.network.api_interface.FollowersFromUserID
 import com.example.tweetfake.network.api_interface.FollowsFromUserID
 import com.example.tweetfake.network.api_interface.TweetsFromUserID
@@ -22,16 +21,16 @@ class TwitterServices {
         private const val accessToken = "Bearer $TOKEN"
         val gson = Gson()
 
+
+
         suspend fun getTweetsFromUserID(userID: String): TweetData {
             var result: TweetData? = null
             CoroutineScope(Dispatchers.IO).launch {
                 val api = retrofit.create(TweetsFromUserID::class.java)
-                Log.d("tag_request", retrofit.toString())
-                val response = api.fetchTweets(accessToken = accessToken, id = userID, userField = "name", expansions = "author_id", max_results = 20).string()
-                Log.d("tag_response", response)
+                val response = api.fetchTweets(accessToken = accessToken, id = userID, userField = "name", expansions = "author_id,entities.mentions.username" , max_results = 20, tweetField = "created_at").string()
 
                 val tweetData: TweetData = gson.fromJson(response, TweetData::class.java)
-                Log.d("tag_user", tweetData.includes.toString())
+
                 try {
                     result = tweetData
                 } catch (e: NullPointerException) {
