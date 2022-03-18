@@ -1,4 +1,4 @@
 package com.example.tweetfake.model
 
-data class Tweet(val id: String, val text: String)
+data class Tweet(val authorId: String, val id: String, val text: String)
 

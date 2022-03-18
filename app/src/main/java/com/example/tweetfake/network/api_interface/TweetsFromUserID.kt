@@ -1,5 +1,6 @@
 package com.example.tweetfake.network.api_interface
 
+import com.example.tweetfake.model.enums.UserField
 import okhttp3.ResponseBody
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -11,5 +12,7 @@ interface TweetsFromUserID {
     suspend fun fetchTweets(
         @Path("id") id:String,
         @Header("Authorization") accessToken: String,
+        @Query("user.fields") userField: String,
+        @Query("expansions") expansions: String
     ): ResponseBody
 }

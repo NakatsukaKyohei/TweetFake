@@ -7,8 +7,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tweetfake.R
+import com.example.tweetfake.model.CustomTweet
 
-class RecyclerAdapter(var userName: Array<String>, var tweetContent: Array<String>) : RecyclerView.Adapter<RecyclerAdapter.RecyclerViewHolder>(){
+class RecyclerAdapter(val tweetContentList: MutableList<CustomTweet>) : RecyclerView.Adapter<RecyclerAdapter.RecyclerViewHolder>(){
 
     class RecyclerViewHolder(view: View): RecyclerView.ViewHolder(view) {
         val tweetUserImage: ImageView = view.findViewById(R.id.tweet_user_image)
@@ -22,13 +23,13 @@ class RecyclerAdapter(var userName: Array<String>, var tweetContent: Array<Strin
         return RecyclerViewHolder(item)
     }
 
-    override fun getItemCount(): Int = userName.size
+    override fun getItemCount(): Int = tweetContentList.size
 
     override fun onBindViewHolder(holder: RecyclerViewHolder, position: Int) {
         holder.let{
             it.tweetUserImage.setImageResource(R.mipmap.ic_launcher_round)
-            it.tweetUsername.text = userName[position]
-            it.tweetContent.text = tweetContent[position]
+            it.tweetUsername.text = tweetContentList[position].name
+            it.tweetContent.text = tweetContentList[position].content
         }
     }
 }

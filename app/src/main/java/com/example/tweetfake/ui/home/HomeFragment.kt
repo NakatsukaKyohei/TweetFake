@@ -9,9 +9,9 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.tweetfake.databinding.FragmentHomeBinding
+import com.example.tweetfake.model.CustomTweet
 import com.example.tweetfake.model.Follow
-import com.example.tweetfake.model.Follower
-import com.example.tweetfake.model.Tweet
+import com.example.tweetfake.model.TweetData
 import com.example.tweetfake.services.TwitterServices
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
@@ -37,14 +37,16 @@ class HomeFragment : Fragment() {
         val tweetOverviewList = binding.tweetOverviewList
 
         // get tweet data
-        var tweetData: MutableList<Tweet>? = null
-        var followData: List<Follow>? = null
+        val tweetDataList: MutableList<TweetData> = mutableListOf()
+
+        val tweetContentList: MutableList<CustomTweet> = mutableListOf()
+        var followData: List<Follow> = listOf()
         runBlocking {
 
             async {
                 try {
                     followData = TwitterServices.getFollowsFromUserID("786544808705691652").data
-//                    Log.d("info", followData.toString())
+                    Log.d("info", followData.toString())
                 } catch(e: NullPointerException) {
                     Log.d("Exception", e.toString())
                 }
@@ -52,30 +54,17 @@ class HomeFragment : Fragment() {
         }
 
         runBlocking {
-            try {
-//                followData!!.map { i -> tweetData?.plus(TwitterServices.getTweetsFromUserID(i.id).data)}
-                tweetData = TwitterServices.getTweetsFromUserID(followData!![0].id).data.toMutableList()
-                tweetData!!.addAll(TwitterServices.getTweetsFromUserID(followData!![1].id).data)
-//                tweetData!!.plus(TwitterServices.getTweetsFromUserID(followData!![1].id).data)
-//                followData!!.map {
-//                    tweetData?.plus(TwitterServices.getTweetsFromUserID(it.id).data)
-//                }
-                Log.d("tag_info", tweetData.toString())
-                Log.d("tag_info", tweetData!!.size.toString())
-
-            } catch(e: NullPointerException) {
-                Log.d("tag_exception", e.toString())
+            followData.mapIndexed { index, follow ->
+                tweetDataList.add(TwitterServices.getTweetsFromUserID(follow.id))
+                tweetDataList[index].data.map { tweetContentList.add(CustomTweet(name = follow.name, content = it.text)) }
             }
         }
-
-        val tweetContents = Array(tweetData!!.size) { i -> tweetData!![i].text}
-        val tweetIDs = Array(tweetData!!.size) { i -> tweetData!![i].id}
 
         tweetOverviewList.let {
             val dividerItemDecoration = DividerItemDecoration(this.context, LinearLayoutManager(this.context).orientation)
             it.addItemDecoration(dividerItemDecoration)
             it.layoutManager = LinearLayoutManager(this.context)
-            it.adapter = RecyclerAdapter(tweetIDs, tweetContents)
+            it.adapter = RecyclerAdapter(tweetContentList)
             it.setHasFixedSize(true)
         }
 
