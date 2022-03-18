@@ -27,7 +27,7 @@ class TwitterServices {
             CoroutineScope(Dispatchers.IO).launch {
                 val api = retrofit.create(TweetsFromUserID::class.java)
                 Log.d("tag_request", retrofit.toString())
-                val response = api.fetchTweets(accessToken = accessToken, id = userID, userField = "name", expansions = "author_id").string()
+                val response = api.fetchTweets(accessToken = accessToken, id = userID, userField = "name", expansions = "author_id", max_results = 20).string()
                 Log.d("tag_response", response)
 
                 val tweetData: TweetData = gson.fromJson(response, TweetData::class.java)

@@ -13,6 +13,7 @@ interface TweetsFromUserID {
         @Path("id") id:String,
         @Header("Authorization") accessToken: String,
         @Query("user.fields") userField: String,
-        @Query("expansions") expansions: String
+        @Query("expansions") expansions: String,
+        @Query("max_results") max_results: Int
     ): ResponseBody
 }

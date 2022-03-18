@@ -13,9 +13,10 @@ import com.example.tweetfake.model.CustomTweet
 import com.example.tweetfake.model.Follow
 import com.example.tweetfake.model.TweetData
 import com.example.tweetfake.services.TwitterServices
-import kotlinx.coroutines.async
-import kotlinx.coroutines.runBlocking
-import java.lang.NullPointerException
+import kotlinx.coroutines.*
+import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTime
 
 class HomeFragment : Fragment() {
 
@@ -25,6 +26,7 @@ class HomeFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
+    @OptIn(ExperimentalTime::class)
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -41,24 +43,44 @@ class HomeFragment : Fragment() {
 
         val tweetContentList: MutableList<CustomTweet> = mutableListOf()
         var followData: List<Follow> = listOf()
-        runBlocking {
-
-            async {
-                try {
-                    followData = TwitterServices.getFollowsFromUserID("786544808705691652").data
-                    Log.d("info", followData.toString())
-                } catch(e: NullPointerException) {
-                    Log.d("Exception", e.toString())
-                }
-            }.join()
-        }
-
-        runBlocking {
-            followData.mapIndexed { index, follow ->
-                tweetDataList.add(TwitterServices.getTweetsFromUserID(follow.id))
-                tweetDataList[index].data.map { tweetContentList.add(CustomTweet(name = follow.name, content = it.text)) }
+        val time1 = measureTime {
+            runBlocking {
+                followData = TwitterServices.getFollowsFromUserID("786544808705691652").data
+                    try {
+                        followData.map {
+                            async {
+                                tweetDataList.add(TwitterServices.getTweetsFromUserID(it.id))
+                            }
+                        }.awaitAll()
+                        Log.d("info", followData.toString())
+                    } catch(e: NullPointerException) {
+                        Log.d("Exception", e.toString())
+                    }
             }
         }
+
+
+        val time2 = measureTime {
+            runBlocking {
+                followData.mapIndexed { index, follow ->
+//                async {
+                    tweetDataList[index].data.map {
+                        async {
+                            tweetContentList.add(
+                                CustomTweet(
+                                    name = follow.name,
+                                    content = it.text
+                                )
+                            )
+                        }
+                    }.awaitAll()
+//                }
+                }
+            }
+        }
+
+        Log.d("time1", time1.toString())
+        Log.d("time2", time2.toString())
 
         tweetOverviewList.let {
             val dividerItemDecoration = DividerItemDecoration(this.context, LinearLayoutManager(this.context).orientation)
