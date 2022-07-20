@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.tweetfake.databinding.FragmentHomeBinding
@@ -38,48 +39,54 @@ class HomeFragment : Fragment() {
         val tweetDataList: MutableList<TweetData> = mutableListOf()
 
         val tweetContentList: MutableList<CustomTweet> = mutableListOf()
-        var followData: List<Follow> = listOf()
-        runBlocking {
+        var followData: List<Follow>
+        lifecycleScope.launch {
             followData = TwitterServices.getFollowsFromUserID("786544808705691652").data
-                try {
-                    followData.map {
-                        async {
-                            tweetDataList.add(TwitterServices.getTweetsFromUserID(it.id))
-                        }
-                    }.awaitAll()
-                } catch(e: NullPointerException) {
-                    Log.d("Exception", e.toString())
+            try {
+                followData.map {
+                    async {
+                        tweetDataList.add(TwitterServices.getTweetsFromUserID(it.id))
+                    }
+                }.awaitAll()
+                tweetDataList.forEachIndexed { index, tweetData ->
+                    Log.d("tweetDataList", tweetDataList[index].toString())
                 }
-        }
-
-        runBlocking {
-                tweetDataList.map {
-                    it.data.map{ tweet ->
-                        async {
-                            tweet.entities ?: run { tweetContentList.add(
+            } catch (e: NullPointerException) {
+                Log.d("Exception", e.toString())
+            }
+            tweetDataList.map {
+                it.data.map { tweet ->
+                    async {
+                        tweet.entities ?: run {
+                            tweetContentList.add(
                                 CustomTweet(
                                     name = it.includes.users[0].name,
                                     content = tweet.text,
                                     createdAt = tweet.created_at
                                 )
-                            )}
-
+                            )
                         }
-                    }.awaitAll()
-                }
-        }
 
-        tweetContentList.let { it ->
-            it.sortWith(compareBy { it.createdAt })
-            it.reverse()
-        }
+                    }
+                }.awaitAll()
+            }
 
-        tweetOverviewList.let {
-            val dividerItemDecoration = DividerItemDecoration(this.context, LinearLayoutManager(this.context).orientation)
-            it.addItemDecoration(dividerItemDecoration)
-            it.layoutManager = LinearLayoutManager(this.context)
-            it.adapter = RecyclerAdapter(tweetContentList)
-            it.setHasFixedSize(true)
+            tweetContentList.let { it ->
+                it.sortWith(compareBy { it.createdAt })
+                it.reverse()
+            }
+
+            tweetOverviewList.let {
+                Log.e("tweet", "TweetOverViewList.Init")
+                val dividerItemDecoration = DividerItemDecoration(
+                    requireContext(),
+                    LinearLayoutManager(requireContext()).orientation
+                )
+                it.addItemDecoration(dividerItemDecoration)
+                it.layoutManager = LinearLayoutManager(requireContext())
+                it.adapter = RecyclerAdapter(tweetContentList)
+                it.setHasFixedSize(true)
+            }
         }
         return root
     }

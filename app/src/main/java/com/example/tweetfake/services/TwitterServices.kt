@@ -60,7 +60,7 @@ class TwitterServices {
             var result: FollowData? = null
             CoroutineScope(Dispatchers.IO).launch {
                 val api = retrofit.create(FollowsFromUserID::class.java)
-                val response = api.fetchFollows(accessToken = accessToken, id = userID).string()
+                val response = api.fetchFollows(accessToken = accessToken, id = userID, maxUser = 1).string()
                 val followData: FollowData = gson.fromJson(response, FollowData::class.java)
                 try {
                     result = followData
